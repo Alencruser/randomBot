@@ -24,6 +24,17 @@ async def clean(ctx,num = 1):
     async for message in ctx.channel.history(limit=num):
         await message.delete()
 
+@slave.command()
+async def join(ctx):
+    await ctx.message.delete()
+    channel = ctx.author.voice.channel
+    await channel.connect()
+
+@slave.command()
+async def disconnect(ctx):
+    await ctx.message.delete()
+    await ctx.voice_client.disconnect()
+
 
 @slave.command()
 async def help(ctx):
