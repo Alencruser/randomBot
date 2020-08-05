@@ -1,5 +1,7 @@
 import discord
 import youtube_dl
+import asyncio
+import time
 from discord.ext import commands
 from keyP import token
 
@@ -30,12 +32,15 @@ def play_song(client, queue, song):
             new_song = queue[0]
             del queue[0]
             play_song(client, queue, new_song)
+        else:
+            time.sleep(5)                
+            asyncio.run_coroutine_threadsafe(client.disconnect(), slave.loop)
 
     client.play(source,after=next)
 
 
 @slave.command()
-async def playlist(ctx,idx,url):
+async def playlist(ctx,url,idx=1):
     await ctx.message.delete()
     video = Video(url)
     if len(musics[ctx.guild]) > 0 :
@@ -45,16 +50,12 @@ async def playlist(ctx,idx,url):
 @slave.command()
 async def play(ctx, url):
     await ctx.message.delete()
-
     server = ctx.guild.voice_client
-
     if server and server.channel:
         # ici append la musique si il joue ou jouer une musique si il est co
         video = Video(url)
         if len(musics[ctx.guild])>0:
             musics[ctx.guild].append(video)
-        else:
-            play_song(server, musics[ctx.guild], video)
     else:
         channel = ctx.author.voice.channel
         video = Video(url)
@@ -81,10 +82,12 @@ async def leave(ctx):
 @slave.command()
 async def Hello(ctx):
     await ctx.send('Hi')
+
 @slave.command()
 async def pubg(ctx):
     await ctx.message.delete()
     await ctx.send('https://i.redd.it/wwmw37gr8gt01.png')
+
 @slave.command()
 async def clean(ctx,num = 1):
     await ctx.message.delete()
