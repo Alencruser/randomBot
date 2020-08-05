@@ -33,24 +33,14 @@ def play_song(client, queue, song):
 
     client.play(source,after=next)
 
-@slave.command()
-async def Hello(ctx):
-    await ctx.send('Hi')
-@slave.command()
-async def pubg(ctx):
-    await ctx.message.delete()
-    await ctx.send('https://i.redd.it/wwmw37gr8gt01.png')
-@slave.command()
-async def clean(ctx,num = 1):
-    await ctx.message.delete()
-    async for message in ctx.channel.history(limit=num):
-        await message.delete()
 
 @slave.command()
-async def join(ctx):
+async def playlist(ctx,idx,url):
     await ctx.message.delete()
-    channel = ctx.author.voice.channel
-    await channel.connect()
+    video = Video(url)
+    if len(musics[ctx.guild]) > 0 :
+        musics[ctx.guild].insert(idx-1,video)
+
 
 @slave.command()
 async def play(ctx, url):
@@ -74,6 +64,11 @@ async def play(ctx, url):
         play_song(server, musics[ctx.guild], video)
 
 @slave.command()
+async def clear(ctx):
+    await ctx.message.delete()
+    del musics[ctx.guild]
+
+@slave.command()
 async def disconnect(ctx):
     await ctx.message.delete()
     await ctx.voice_client.disconnect()
@@ -83,6 +78,24 @@ async def leave(ctx):
     await ctx.message.delete()
     await ctx.voice_client.disconnect()
 
+@slave.command()
+async def Hello(ctx):
+    await ctx.send('Hi')
+@slave.command()
+async def pubg(ctx):
+    await ctx.message.delete()
+    await ctx.send('https://i.redd.it/wwmw37gr8gt01.png')
+@slave.command()
+async def clean(ctx,num = 1):
+    await ctx.message.delete()
+    async for message in ctx.channel.history(limit=num):
+        await message.delete()
+
+@slave.command()
+async def join(ctx):
+    await ctx.message.delete()
+    channel = ctx.author.voice.channel
+    await channel.connect()
 
 @slave.command()
 async def help(ctx):
